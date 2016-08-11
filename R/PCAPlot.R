@@ -10,6 +10,9 @@
 #' @return A file named PCA.png in the figures directory with a pairwise plot of the three first principal components
 #' @author Marie-Agnes Dillies and Hugo Varet
 
+library(ggbiplot)
+library(gridExtra)
+
 PCAPlot <- function(counts.trans, group, n=min(500,nrow(counts.trans)), 
                     col=c("lightblue","orange","MediumVioletRed","SpringGreen"),
                     outfile=TRUE){
@@ -23,28 +26,16 @@ PCAPlot <- function(counts.trans, group, n=min(500,nrow(counts.trans)),
   if (outfile) png(filename="figures/PCA.png",width=1800*2,height=1800,res=300)
     par(mfrow=c(1,2))
 	# axes 1 et 2
-	abs=range(pca$x[,1]); abs=abs(abs[2]-abs[1])/25;
-    ord=range(pca$x[,2]); ord=abs(ord[2]-ord[1])/25;
-    plot(pca$x[,1], pca$x[,2],
-         las = 1, cex = 2, pch = 16, col = col[as.integer(group)],
-	     xlab = paste0("PC1 (",prp[1],"%)"), 
-	     ylab = paste0("PC2 (",prp[2],"%)"), 
-	     main = "Principal Component Analysis - Axes 1 and 2")
-    abline(h=0,v=0,lty=2,col="lightgray")
-    text(pca$x[,1] - ifelse(pca$x[,1]>0,abs,-abs), pca$x[,2] - ifelse(pca$x[,2]>0,ord,-ord),
-         colnames(counts.trans), col=col[as.integer(group)])
+  p1 <- ggbiplot::ggbiplot(pca, obs.scale = 1, var.scale = 1, 
+                    groups = group, ellipse = TRUE, 
+                    circle = FALSE, var.axes = FALSE) + theme(aspect.ratio=1)
 
 	# axes 1 et 3
-	abs=range(pca$x[,1]); abs=abs(abs[2]-abs[1])/25;
-    ord=range(pca$x[,3]); ord=abs(ord[2]-ord[1])/25;
-    plot(pca$x[,1], pca$x[,3],
-         las = 1, cex = 2, pch = 16, col = col[as.integer(group)],
-	     xlab = paste0("PC1 (",prp[1],"%)"), 
-	     ylab = paste0("PC3 (",prp[3],"%)"), 
-	     main = "Principal Component Analysis - Axes 1 and 3")
-    abline(h=0,v=0,lty=2,col="lightgray")
-    text(pca$x[,1] - ifelse(pca$x[,1]>0,abs,-abs), pca$x[,3] - ifelse(pca$x[,3]>0,ord,-ord),
-         colnames(counts.trans), col=col[as.integer(group)])
+  p2 <- ggbiplot::ggbiplot(pca, choices = c(1,3), obs.scale = 1, var.scale = 1, 
+                    groups = group, ellipse = TRUE, 
+                    circle = FALSE, var.axes = FALSE
+                    )  + theme(aspect.ratio=1)
+  grid.arrange(p1, p2, ncol=2)
   if (outfile) dev.off()
 
   return(invisible(pca$x))
