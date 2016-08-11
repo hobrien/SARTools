@@ -56,9 +56,9 @@ checkParameters.DESeq2 <- function(projectName,author,targetFile,rawDir,
     print("condRef must be a character vector of length 1")
 	problem <- TRUE
   }
-  if (!is.null(batch) && I(!is.character(batch) | length(batch)!=1)){
-    print("batch must be NULL or a character vector of length 1")
-	problem <- TRUE
+  if (!is.null(batch) && !is.character(batch)){
+    print("batch must be a character vector or equal to NULL")
+    problem <- TRUE
   }
   if (!is.character(fitType) | length(fitType)!=1 || !I(fitType %in% c("parametric","local"))){
     print("fitType must be equal to 'parametric' or 'local'")

@@ -21,7 +21,7 @@ run.DESeq2 <- function(counts, target, varInt, batch=NULL,
 		       cooksCutoff=TRUE, independentFiltering=TRUE, alpha=0.05, ...){
   # building dds object
   dds <- DESeqDataSetFromMatrix(countData=counts, colData=target, 
-                                design=formula(paste("~", ifelse(!is.null(batch), paste(batch,"+"), ""), varInt)))
+                                design=formula(paste("~", varInt, ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), ""))))
   cat("Design of the statistical model:\n")
   cat(paste(as.character(design(dds)),collapse=" "),"\n")					  
   
