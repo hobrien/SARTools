@@ -16,12 +16,15 @@
 #' @return A list containing the \code{dds} object (\code{DESeqDataSet} class), the \code{results} objects (\code{DESeqResults} class) and the vector of size factors
 #' @author Hugo Varet
 
-run.DESeq2 <- function(counts, target, varInt, batch=NULL,
+run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL,
                        locfunc="median", fitType="parametric", pAdjustMethod="BH",
 		       cooksCutoff=TRUE, independentFiltering=TRUE, alpha=0.05, ...){
   # building dds object
   dds <- DESeqDataSetFromMatrix(countData=counts, colData=target, 
-                                design=formula(paste("~", varInt, ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), ""))))
+                                design=formula(paste("~", varInt, 
+                                                     ifelse(!is.null(interact), paste(c("", interact), collapse = " * "), ""),
+                                                     ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
+                                )))
   cat("Design of the statistical model:\n")
   cat(paste(as.character(design(dds)),collapse=" "),"\n")					  
   
