@@ -15,12 +15,14 @@ barplotTotal <- function(counts, group, col=c("lightblue","orange","MediumViolet
   libsize$sample <- factor(libsize$sample,levels=unique(libsize$sample))
   print(ggplot(libsize, aes(x=sample, y=mil_reads, fill=group)) +
           geom_bar(stat='identity', position='dodge') +
+          scale_y_continuous(limits=c(0,max(libsize$mil_reads)*1.1)) +
           ylab("Total read count (million)") +
           xlab ("") +
           ggtitle("Total read count per sample (million)") +
           tufte_theme() +
           scale_fill_brewer(type = "qual", palette = 6) +
-          theme(axis.text.x = element_text(angle = 90, hjust = 1, size=4))
+          theme(axis.text.x = element_text(angle = 90, hjust = 1, size=4)) +
+          theme(legend.position=c(.9,.9))
   )    
   if (outfile) dev.off()
 }
