@@ -13,12 +13,20 @@ barplotNull <- function(counts, group, col=c("lightblue","orange","MediumVioletR
   if (outfile) png(filename="figures/barplotNull.png",width=min(3600,1800+800*ncol(counts)/10),height=1800,res=300)
     percentage <- apply(counts, 2, function(x){sum(x == 0)})*100/nrow(counts)
     percentage.allNull <- (nrow(counts) - nrow(removeNull(counts)))*100/nrow(counts)
-    barplot(percentage, las = 2,
-            col = col[as.integer(group)],
-		    ylab = "Proportion of null counts",
-		    main = "Proportion of null counts per sample", 
-	  	    ylim = c(0,1.2*ifelse(max(percentage)==0,1,max(percentage))))
-    abline(h = percentage.allNull, lty = 2, lwd = 2)
-    legend("topright", levels(group), fill=col[1:nlevels(group)], bty="n")
+    nullPecr <- data.frame(percentage=percentage, sample=colnames(counts))
+    nullPecr$sample <- factor(nullPecr$sample,levels=unique(nullPecr$sample))
+    print(ggplot(nullPecr, aes(x=sample, y=percentage, fill=group)) +
+            geom_bar(stat='identity', position='dodge') +
+            geom_abline(intercept = percentage.allNull, slope=0, linetype=2) +
+            scale_y_continuous(limits=c(0,max(nullPecr$percent)+10)) +
+            ylab("Proportion of null counts") +
+            xlab ("") +
+            ggtitle("Proportion of null counts per sample") +
+            tufte_theme() +
+            scale_fill_brewer(type = "qual", palette = 6) +
+            theme(axis.text.x = element_text(angle = 90, hjust = 1, size=4)) +
+            theme(legend.position=c(.9,.9))
+          
+    )    
   if (outfile) dev.off()
 }
