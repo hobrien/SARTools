@@ -35,9 +35,13 @@ exportResults.DESeq2 <- function(out.DESeq2, group, alpha=0.05){
 						   padj=results[[name]][,"padj"])
     complete.name <- merge(complete.name, res.name, by="Id", all=TRUE)
     # ajout d'elements depuis mcols(dds)
+    betaConv <- mcols(dds)$betaConv
+    if (is.null(betaConv)) {
+      betaConv <- mcols(dds)$fullBetaConv # Use fullBetaConv in place of betaConv when using LRT
+    }
     mcols.add <- data.frame(Id=rownames(counts(dds)),dispGeneEst=round(mcols(dds)$dispGeneEst,4),
                             dispFit=round(mcols(dds)$dispFit,4),dispMAP=round(mcols(dds)$dispMAP,4),
-                            dispersion=round(mcols(dds)$dispersion,4),betaConv=mcols(dds)$betaConv,
+                            dispersion=round(mcols(dds)$dispersion,4),betaConv=betaConv,
                             maxCooks=round(apply(assays(dds)[["cooks"]], 1, max),4))
     complete.name <- merge(complete.name, mcols.add, by="Id", all=TRUE)
     complete[[name]] <- complete.name
