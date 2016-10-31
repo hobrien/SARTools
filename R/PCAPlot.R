@@ -34,7 +34,7 @@ PCAPlot <- function(counts.trans, group, n=min(500,nrow(counts.trans)),
                     scale_colour_brewer(type = "qual", palette = 6)
 
 	# axes 1 et 3
-  p2 <- ggbiplot::ggbiplot(pca, choices = c(2,3), obs.scale = 1, var.scale = 1, 
+  p2 <- ggbiplot::ggbiplot(pca, choices = c(1,3), obs.scale = 1, var.scale = 1, 
                     groups = group, ellipse = TRUE, 
                     circle = FALSE, var.axes = FALSE) +
                     tufte_theme() +
