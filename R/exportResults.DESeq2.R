@@ -13,7 +13,7 @@ exportResults.DESeq2 <- function(out.DESeq2, group, alpha=0.05){
   dds <- out.DESeq2$dds
   results <- out.DESeq2$results
   
-  # comptages bruts et normalisés
+  # comptages bruts et normalis?s
   counts <- data.frame(Id=rownames(counts(dds)), counts(dds), round(counts(dds, normalized=TRUE)))
   colnames(counts) <- c("Id", colnames(counts(dds)), paste0("norm.", colnames(counts(dds))))
   # baseMean avec identifiant
@@ -38,11 +38,11 @@ exportResults.DESeq2 <- function(out.DESeq2, group, alpha=0.05){
     mcols.add <- data.frame(Id=rownames(counts(dds)),dispGeneEst=round(mcols(dds)$dispGeneEst,4),
                             dispFit=round(mcols(dds)$dispFit,4),dispMAP=round(mcols(dds)$dispMAP,4),
                             dispersion=round(mcols(dds)$dispersion,4),betaConv=mcols(dds)$betaConv,
-                            maxCooks=round(mcols(dds)$maxCooks,4))
+                            maxCooks=round(apply(assays(dds)[["cooks"]], 1, max),4))
     complete.name <- merge(complete.name, mcols.add, by="Id", all=TRUE)
     complete[[name]] <- complete.name
 	
-    # sélection des up et down
+    # s?lection des up et down
 	up.name <- complete.name[which(complete.name$padj <= alpha & complete.name$betaConv & complete.name$log2FoldChange>=0),]
 	up.name <- up.name[order(up.name$padj),]
 	down.name <- complete.name[which(complete.name$padj <= alpha & complete.name$betaConv & complete.name$log2FoldChange<=0),]
