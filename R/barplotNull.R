@@ -24,7 +24,7 @@ barplotNull <- function(counts, group, col=c("lightblue","orange","MediumVioletR
             ggtitle("Proportion of null counts per sample") +
             tufte_theme() +
             scale_fill_brewer(type = "qual", palette = 6) +
-            theme(axis.text.x = element_text(angle = 90, hjust = 1, size=4)) +
+            theme(axis.text.x = element_text(angle = 90, hjust = 1, size=round(400/nrow(nullPecr)))) +
             theme(legend.position=c(.9,.9))
           
     )    
