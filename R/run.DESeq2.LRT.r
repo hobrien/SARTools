@@ -26,8 +26,16 @@ run.DESeq2.LRT <- function(counts, target, varInt, batch=NULL, interact=NULL, re
                                                      ifelse(!is.null(interact), paste(c("", interact), collapse = " * "), ""),
                                                      ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
                                 )))
+  
+  reduced=formula(paste("~ 1",  ifelse(!is.null(interact), paste(c("", interact), collapse = " + "), ""),
+                        ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
+  ))
+  
   cat("Design of the statistical model:\n")
   cat(paste(as.character(design(dds)),collapse=" "),"\n")					  
+
+  cat("Design of the reduced model:\n")
+  cat(paste(as.character(reduced),collapse=" "),"\n")					  
   
   # normalization
   dds <- estimateSizeFactors(dds,locfunc=eval(as.name(locfunc)))
@@ -40,16 +48,12 @@ run.DESeq2.LRT <- function(counts, target, varInt, batch=NULL, interact=NULL, re
   reduced=formula(paste("~ 1",  ifelse(!is.null(interact), paste(c("", interact), collapse = " + "), ""),
                           ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
     ))
+  #reduced=formula(" ~ 1 + PCW + Centre + RIN")
   dds <- nbinomLRT(dds, reduced=reduced)
   results <- list()
-  for (comp in combn(nlevels(colData(dds)[,varInt]), 2, simplify=FALSE)){
-    levelRef <- levels(colData(dds)[,varInt])[comp[1]]
-    levelTest <- levels(colData(dds)[,varInt])[comp[2]]
-    results[[paste0(levelTest,"_vs_",levelRef)]] <- results(dds, contrast=c(varInt, levelTest, levelRef),
+  results[[paste0("drop_", varInt)]]<- results(dds,
                                                             pAdjustMethod=pAdjustMethod, cooksCutoff=cooksCutoff,
                                                             independentFiltering=independentFiltering, alpha=alpha)
-    cat(paste("Comparison", levelTest, "vs", levelRef, "done\n"))
-  }
   
   return(list(dds=dds,results=results,sf=sizeFactors(dds)))
 }
