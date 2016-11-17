@@ -40,11 +40,13 @@ countsBoxplots <- function(object, group, col = c("lightblue","orange","MediumVi
     
     countPlot <- ggplot(counts, aes(x=sample, y=log2(count+1), fill=varInt, colour=varInt)) + 
         geom_boxplot() +
+        xlab ("") +
         tufte_theme() +
         theme(axis.text.x = element_text(angle=90, size=round(400/nrow(varInt))),
               legend.position = "none")
     normPlot <- ggplot(norm.counts, aes(x=sample, y=log2(count+1), fill=varInt, colour=varInt)) + 
       geom_boxplot() +
+      xlab ("") +
       tufte_theme() +
       theme(axis.text.x = element_text(angle=90, size=round(400/nrow(varInt))))
     if (is.factor(group)) {
