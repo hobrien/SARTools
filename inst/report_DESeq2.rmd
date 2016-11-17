@@ -310,15 +310,20 @@ Parameter values used for this analysis are:
 - featuresToRemove: `r ifelse(is.null(featuresToRemove),"NULL",paste(featuresToRemove,collapse=", "))`
 - varInt: `r varInt`
 - condRef: `r condRef`
-- batch: `r ifelse(is.null(batch),"NULL",batch)`
+- batch: `r ifelse(is.null(batch),"NULL",paste(batch, collapse=', '))`
+- interaction: `r ifelse(is.null(interact),"NULL",paste(interact, collapse=', '))`
+- RIN_cutoff: `r RIN_cutoff`
+- PCW_cutoff: `r ifelse(is.null(PCW_cutoff), "NULL", paste(PCW_cutoff, collapse='-'))`
 - fitType: `r fitType`
 - cooksCutoff: `r cooksCutoff`
 - independentFiltering: `r independentFiltering`
 - alpha: `r alpha`
 - pAdjustMethod: `r pAdjustMethod`
+- testMethod: `r testMethod`
 - typeTrans: `r typeTrans`
 - locfunc: `r locfunc`
 - colors: `r colors`
+- exclude: `r ifelse(is.null(exclude), "NULL", paste(exclude, collapse=', '))`
 
 --------------------------------------------------------------------------------------------------------------------------
 
