@@ -1,3 +1,4 @@
+library(gridExtra)
 #' Box-plots of (normalized) counts distribution per sample
 #'
 #' Box-plots of raw and normalized counts distributions per sample to assess the effect of the normalization
@@ -26,14 +27,33 @@ countsBoxplots <- function(object, group, col = c("lightblue","orange","MediumVi
   }
 
   if (outfile) png(filename="figures/countsBoxplots.png",width=2*min(2200,1800+800*ncol(norm.counts)/10),height=1800,res=300)
-    par(mfrow=c(1,2))
 	# raw counts
-    boxplot(log2(counts+1), col = col[as.integer(group)], las = 2,
-	        main = "Raw counts distribution", ylab = expression(log[2] ~ (raw ~ count + 1)))
-    legend("topright", levels(group), fill=col[1:nlevels(group)], bty="n")
-	# norm counts
-    boxplot(log2(norm.counts+1), col = col[as.integer(group)], las = 2,
-	        main = "Normalized counts distribution", ylab = expression(log[2] ~ (norm ~ count + 1)))
-    legend("topright", levels(group), fill=col[1:nlevels(group)], bty="n")
-  if (outfile) dev.off()
+    varInt <- data.frame(varInt=group, sample=colnames(counts))
+    counts <- counts %>% as.data.frame() %>% 
+      mutate(ID=rownames(counts)) %>% 
+      gather("sample", "count", -ID) %>% 
+      full_join(varInt)
+    norm.counts <- norm.counts %>% as.data.frame() %>% 
+      mutate(ID=rownames(norm.counts)) %>% 
+      gather("sample", "count", -ID) %>% 
+      full_join(varInt)
+    
+    countPlot <- ggplot(counts, aes(x=sample, y=log2(count+1), fill=varInt, colour=varInt)) + 
+        geom_boxplot() +
+        tufte_theme() +
+        theme(axis.text.x = element_text(angle=90, size=round(400/nrow(varInt))),
+              legend.position = "none")
+    normPlot <- ggplot(norm.counts, aes(x=sample, y=log2(count+1), fill=varInt, colour=varInt)) + 
+      geom_boxplot() +
+      tufte_theme() +
+      theme(axis.text.x = element_text(angle=90, size=round(400/nrow(varInt))))
+    if (is.factor(group)) {
+      countPlot <- countPlot + scale_colour_brewer(type = "qual", palette = 6) + scale_fill_brewer(type = "qual", palette = 6) 
+      normPlot <- normPlot + scale_colour_brewer(type = "qual", palette = 6) + scale_fill_brewer(type = "qual", palette = 6) 
+    } else {  
+      countPlot <- countPlot + scale_fill_distiller(palette = "Spectral") + scale_colour_distiller(palette = "Spectral")
+      normPlot <- normPlot + scale_fill_distiller(palette = "Spectral") + scale_colour_distiller(palette = "Spectral")
+    }
+    grid.arrange(countPlot, normPlot, ncol=2)
+    if (outfile) dev.off()
 }
