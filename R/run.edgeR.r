@@ -27,6 +27,12 @@ run.edgeR <- function(counts, target, varInt, condRef, batch=NULL, cpmCutoff=1,
   
   # building dge object
   design <- formula(paste("~", ifelse(!is.null(batch), paste(batch,"+"), ""), varInt))
+  
+  design <- formula(paste("~", varInt, 
+                       ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
+                        )
+                    )
+                       
   dge <- DGEList(counts=fcounts, remove.zeros=TRUE)
   dge$design <- model.matrix(design, data=target)
   cat("\nDesign of the statistical model:\n")
