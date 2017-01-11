@@ -48,6 +48,7 @@ countsBoxplots <- function(object, group, col = c("lightblue","orange","MediumVi
       geom_boxplot() +
       xlab ("") +
       tufte_theme() +
+      theme(legend.position="right") +
       theme(axis.text.x = element_text(angle=90, size=round(400/nrow(varInt))))
     if (is.factor(group)) {
       countPlot <- countPlot + scale_colour_brewer(type = "qual", palette = 6) + scale_fill_brewer(type = "qual", palette = 6) 
