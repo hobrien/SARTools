@@ -20,8 +20,7 @@ run.edgeR <- function(counts, target, varInt, condRef, batch=NULL, cpmCutoff=1,
   # filtering: select features which contain at least 
   # minReplicates (smallest number of replicates) with
   # at least cpmCutoff counts per million
-  # features were filtered so that all had at least 1 cpm in at least half of samples
-  minReplicates <- length(target[,varInt])/2
+  minReplicates <- min(table(target[,varInt]))
   fcounts <- counts[rowSums(cpm(counts) >= cpmCutoff) >= minReplicates,]
   cat("Number of features discarded by the filtering:\n")
   cat(nrow(counts)-nrow(fcounts),"\n")
