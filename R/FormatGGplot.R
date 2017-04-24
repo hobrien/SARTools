@@ -4,7 +4,7 @@ fte_theme <- function() {
     color.background = "#FFFFFF"
     color.grid.major = "#D9D9D9"
     color.axis.text = "#737373"
-    color.axis.title = "#525252"]
+    color.axis.title = "#525252"
     color.title = "#000000"
     
     # Begin construction of chart
