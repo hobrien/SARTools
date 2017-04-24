@@ -54,7 +54,7 @@ checkParameters.edgeR <- function(projectName,author,targetFile,rawDir,
     print("condRef must be a character vector of length 1")
 	problem <- TRUE
   }
-  if (!is.null(batch) && I(!is.character(batch) | length(batch)!=1)){
+  if (!is.null(batch) && I(!is.character(batch)){
     print("batch must be NULL or a character vector of length 1")
 	problem <- TRUE
   }
