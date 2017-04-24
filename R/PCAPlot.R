@@ -29,7 +29,7 @@ PCAPlot <- function(counts.trans, group, n=min(500,nrow(counts.trans)),
   p1 <- ggbiplot::ggbiplot(pca, obs.scale = 1, var.scale = 1, 
                     groups = group, ellipse = TRUE, 
                     circle = FALSE, var.axes = FALSE) + 
-                    tufte_theme() +
+                    fte_theme() +
                     theme(aspect.ratio=1) +
                     scale_colour_brewer(type = "qual", palette = 6)
 
@@ -37,7 +37,7 @@ PCAPlot <- function(counts.trans, group, n=min(500,nrow(counts.trans)),
   p2 <- ggbiplot::ggbiplot(pca, choices = c(1,3), obs.scale = 1, var.scale = 1, 
                     groups = group, ellipse = TRUE, 
                     circle = FALSE, var.axes = FALSE) +
-                    tufte_theme() +
+                    fte_theme() +
                     theme(aspect.ratio=1) +
                     scale_colour_brewer(type = "qual", palette = 6) +
                     theme(legend.position=c(.9,.9))
