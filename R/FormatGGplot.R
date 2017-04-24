@@ -11,9 +11,9 @@ fte_theme <- function() {
     theme_bw(base_size=9) +
         
         # Set the entire chart region to a light gray color
-        theme(panel.background=element_blank) +
-        theme(plot.background=element_blank) +
-        theme(panel.border=element_rect(color=color.background)) +
+      theme(panel.background=element_rect(fill=color.background, color=color.background)) +
+      theme(plot.background=element_rect(fill=color.background, color=color.background)) +
+      theme(panel.border=element_rect(color=color.background)) +
         
         # Format the grid
         theme(panel.grid.major=element_line(color=color.grid.major,size=.25)) +
@@ -22,8 +22,8 @@ fte_theme <- function() {
         
         # Format the legend, but hide by default
         theme(legend.position="none") +
-        theme(legend.background = element_blank) +
-        theme(legend.key = element_blank) +
+        theme(legend.background = element_rect(fill=color.background, color=color.background)) +
+        theme(legend.key = element_rect(fill=color.background, color=color.background)) +
         theme(legend.text = element_text(size=12,color=color.axis.title)) +
         theme(legend.title = element_blank()) +
         
