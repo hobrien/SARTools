@@ -30,7 +30,7 @@ exportResults.DESeq2 <- function(out.DESeq2, group, alpha=0.05){
     complete.name <- base
 
     # ajout d'elements depuis results
-    res.name <- data.frame(Id=rownames(results[[name]]),FoldChange=round(2^(results[[name]][,"log2FoldChange"]),3),
+    res.name <- data.frame(Id=rownames(results[[name]]),FC=round(2^(results[[name]][,"log2FoldChange"]),3),
                            log2FoldChange=round(results[[name]][,"log2FoldChange"],3),pvalue=results[[name]][,"pvalue"],
 						   padj=results[[name]][,"padj"])
     complete.name <- merge(complete.name, res.name, by="Id", all=TRUE)
