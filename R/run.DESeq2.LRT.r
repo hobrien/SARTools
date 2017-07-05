@@ -45,14 +45,9 @@ run.DESeq2.LRT <- function(counts, target, varInt, batch=NULL, interact=NULL, re
   # estimating dispersions
   dds <- estimateDispersions(dds, fitType=fitType)
   
-  reduced=formula(paste("~ 1",  ifelse(!is.null(interact), paste(c("", interact), collapse = " + "), ""),
-                          ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
-    ))
-  #reduced=formula(" ~ 1 + PCW + Centre + RIN")
   dds <- nbinomLRT(dds, reduced=reduced)
   results <- list()
-  results[[paste0("drop_", varInt)]]<- results(dds,
-                                                            pAdjustMethod=pAdjustMethod, cooksCutoff=cooksCutoff,
+  results[[paste0("drop_", varInt)]]<- results(dds, name=varInt, pAdjustMethod=pAdjustMethod, cooksCutoff=cooksCutoff,
                                                             independentFiltering=independentFiltering, alpha=alpha)
   
   return(list(dds=dds,results=results,sf=sizeFactors(dds)))
