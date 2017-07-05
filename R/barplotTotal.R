@@ -13,14 +13,21 @@ barplotTotal <- function(counts, group, col=c("lightblue","orange","MediumViolet
   if (outfile) png(filename="figures/barplotTotal.png",width=min(3600,1800+800*ncol(counts)/10),height=1800,res=300)
   libsize <- data.frame(sample=colnames(counts), group=group, mil_reads=colSums(counts)/1e6)
   libsize$sample <- factor(libsize$sample,levels=unique(libsize$sample))
-  print(ggplot(libsize, aes(x=sample, y=mil_reads, fill=group)) +
+  if (is.numeric(group)) {
+    palette <- 15
+    type <- "seq"
+  } else {
+    palette <- 6
+    type = "qual"
+  }
+  print(ggplot(libsize, aes(x=sample, y=mil_reads, fill=factor(group))) +
           geom_bar(stat='identity', position='dodge') +
           scale_y_continuous(limits=c(0,max(libsize$mil_reads)*1.1)) +
           ylab("Total read count (million)") +
           xlab ("") +
           ggtitle("Total read count per sample (million)") +
           fte_theme() +
-          scale_fill_brewer(type = "qual", palette = 6) +
+          scale_fill_brewer(type = type, palette = palette) +
           theme(axis.text.x = element_text(angle = 90, hjust = 1, size=round(400/nrow(libsize)))) +
           theme(legend.position=c(.9,.9))
   )    

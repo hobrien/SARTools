@@ -11,15 +11,24 @@
 
 densityPlot <- function(counts, group, col=c("lightblue","orange","MediumVioletRed","SpringGreen"), outfile=TRUE){
   if (outfile) png(filename="figures/densplot.png",width=1800,height=1800,res=300)
-    counts <- removeNull(counts)
-    plot(density(log2(counts[,1]+1)), las = 1, lwd = 2,
-         main = "Density of counts distribution",
-	     xlab = expression(log[2] ~ (raw ~ count + 1)),
-	     ylim = c(0,max(apply(counts,2,function(x){max(density(log2(x+1))$y)}))*1.05),
-         col = col[as.integer(group)[1]])
-    for (i in 2:ncol(counts)){
-      lines(density(log2(counts[,i]+1)),col=col[as.integer(group)[i]],lwd=2)
+    labels <- data.frame(Sample=paste0('X', colnames(counts)), group=group)
+    counts2 <- removeNull(counts)
+    counts2 <- data.frame(counts2)
+    counts2$Id<- rownames(counts2)
+    counts2 <- gather(counts2, Sample, Count, -Id) %>% full_join(labels)
+    if (is.numeric(group)) {
+      palette <- 15
+      type <- "seq"
+    } else {
+      palette <- 6
+      type = "qual"
     }
-  legend("topright", levels(group), lty=1, col=col[1:nlevels(group)], lwd=2, bty="n")
+    print(ggplot(counts2, aes(x=log2(Count+1), group=Sample, colour=factor(group))) + 
+            geom_density() +
+            ggtitle("Density of counts distribution") +
+            fte_theme() +
+            scale_colour_brewer(type=type, palette=palette) +
+            theme(legend.position=c(.9,.9))
+        )
   if (outfile) dev.off()
 }

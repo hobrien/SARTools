@@ -15,7 +15,14 @@ barplotNull <- function(counts, group, col=c("lightblue","orange","MediumVioletR
     percentage.allNull <- (nrow(counts) - nrow(removeNull(counts)))*100/nrow(counts)
     nullPecr <- data.frame(percentage=percentage, sample=colnames(counts))
     nullPecr$sample <- factor(nullPecr$sample,levels=unique(nullPecr$sample))
-    print(ggplot(nullPecr, aes(x=sample, y=percentage, fill=group)) +
+    if (is.numeric(group)) {
+      palette <- 15
+      type <- "seq"
+    } else {
+      palette <- 6
+      type = "qual"
+    }
+    print(ggplot(nullPecr, aes(x=sample, y=percentage, fill=factor(group))) +
             geom_bar(stat='identity', position='dodge') +
             geom_abline(intercept = percentage.allNull, slope=0, linetype=2) +
             scale_y_continuous(limits=c(0,max(nullPecr$percent)+10)) +
@@ -23,7 +30,7 @@ barplotNull <- function(counts, group, col=c("lightblue","orange","MediumVioletR
             xlab ("") +
             ggtitle("Proportion of null counts per sample") +
             fte_theme() +
-            scale_fill_brewer(type = "qual", palette = 6) +
+            scale_fill_brewer(type=type, palette=palette) +
             theme(axis.text.x = element_text(angle = 90, hjust = 1, size=round(400/nrow(nullPecr)))) +
             theme(legend.position=c(.9,.9))
           

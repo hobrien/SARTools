@@ -21,26 +21,32 @@ PCAPlot <- function(counts.trans, group, n=min(500,nrow(counts.trans)),
   pca = prcomp(t(counts.trans[order(rv, decreasing = TRUE), ][1:n,]))
   prp <- pca$sdev^2 * 100 / sum(pca$sdev^2)
   prp <- round(prp[1:3],2)
-
+  if (is.numeric(group)) {
+    palette <- 15
+    type <- "seq"
+  } else {
+    palette <- 6
+    type = "qual"
+  }
   # create figure
   if (outfile) png(filename="figures/PCA.png",width=1800*2,height=1800,res=300)
     par(mfrow=c(1,2))
 	# axes 1 et 2
   p1 <- ggbiplot::ggbiplot(pca, obs.scale = 1, var.scale = 1, 
-                    groups = group, ellipse = TRUE, 
-                    circle = FALSE, var.axes = FALSE) + 
+                    groups = factor(group), ellipse = TRUE, 
+                    circle = FALSE, var.axes = FALSE) +
+                    scale_colour_brewer(type = type, palette = palette) +
                     fte_theme() +
-                    theme(aspect.ratio=1) +
-                    scale_colour_brewer(type = "qual", palette = 6)
+                    theme(aspect.ratio=1)
 
 	# axes 1 et 3
   p2 <- ggbiplot::ggbiplot(pca, choices = c(1,3), obs.scale = 1, var.scale = 1, 
-                    groups = group, ellipse = TRUE, 
-                    circle = FALSE, var.axes = FALSE) +
-                    fte_theme() +
-                    theme(aspect.ratio=1) +
-                    scale_colour_brewer(type = "qual", palette = 6) +
-                    theme(legend.position=c(.9,.9))
+                           groups = factor(group), ellipse = TRUE, 
+                           circle = FALSE, var.axes = FALSE) +
+                           fte_theme() +
+                           scale_colour_brewer(type = type, palette = palette) +
+                           theme(aspect.ratio=1) +
+                           theme(legend.position=c(.9,.9))
   
   grid.arrange(p1, p2, ncol=2)
   if (outfile) dev.off()

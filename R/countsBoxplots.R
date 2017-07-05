@@ -37,26 +37,29 @@ countsBoxplots <- function(object, group, col = c("lightblue","orange","MediumVi
       mutate(ID=rownames(norm.counts)) %>% 
       gather("sample", "count", -ID) %>% 
       full_join(varInt)
-    
-    countPlot <- ggplot(counts, aes(x=sample, y=log2(count+1), fill=varInt, colour=varInt)) + 
+    if (is.numeric(group)) {
+      palette <- 15
+      type <- "seq"
+    } else {
+      palette <- 6
+      type = "qual"
+    }
+    countPlot <- ggplot(counts, aes(x=sample, y=log2(count+1), fill=factor(varInt), colour=factor(varInt))) + 
         geom_boxplot() +
-        xlab ("") +
+      scale_colour_brewer(type = type, palette = palette) +
+      scale_fill_brewer(type = type, palette = palette) +
+      xlab ("") +
         fte_theme() +
         theme(axis.text.x = element_text(angle=90, size=round(400/nrow(varInt))),
               legend.position = "none")
-    normPlot <- ggplot(norm.counts, aes(x=sample, y=log2(count+1), fill=varInt, colour=varInt)) + 
+    normPlot <- ggplot(norm.counts, aes(x=sample, y=log2(count+1), fill=factor(varInt), colour=factor(varInt))) + 
       geom_boxplot() +
+      scale_colour_brewer(type = type, palette = palette) +
+      scale_fill_brewer(type = type, palette = palette) +
       xlab ("") +
       fte_theme() +
       theme(legend.position="right") +
       theme(axis.text.x = element_text(angle=90, size=round(400/nrow(varInt))))
-    if (is.factor(group)) {
-      countPlot <- countPlot + scale_colour_brewer(type = "qual", palette = 6) + scale_fill_brewer(type = "qual", palette = 6) 
-      normPlot <- normPlot + scale_colour_brewer(type = "qual", palette = 6) + scale_fill_brewer(type = "qual", palette = 6) 
-    } else {  
-      countPlot <- countPlot + scale_fill_distiller(palette = "Spectral") + scale_colour_distiller(palette = "Spectral")
-      normPlot <- normPlot + scale_fill_distiller(palette = "Spectral") + scale_colour_distiller(palette = "Spectral")
-    }
     grid.arrange(countPlot, normPlot, ncol=2)
     if (outfile) dev.off()
 }
