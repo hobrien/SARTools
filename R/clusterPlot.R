@@ -25,13 +25,14 @@ clusterPlot <- function(counts.trans, group, outfile=TRUE){
   print(ggplot(segment(ddata)) + 
     geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) +
     geom_text(data = ddata$labels, 
-              aes(x = x, y = y, label = label, colour=factor(group)), angle = 90, hjust = 1, size=round(180/length(group))) +
+              aes(x = x, y = y, label = label, colour=factor(group)), angle = 90, hjust = 1, size=round(150/length(group))) +
     ylab("Height") +
     xlab ("Method: Euclidean distance - Ward criterion") +
     ggtitle("Cluster dendrogram") +
     fte_theme() +
     scale_colour_brewer(type = type, palette = palette) +
-    scale_y_continuous(limits=c(-100, 1500)) +
+    expand_limits(y=-1500/length(group)) +
+    #scale_y_continuous(limits=c(-100, 1500)) +
     theme(axis.text.x = element_blank()) +
     theme(legend.position=c(.9,.9))
   )
