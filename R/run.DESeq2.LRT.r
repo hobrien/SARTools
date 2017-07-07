@@ -47,7 +47,7 @@ run.DESeq2.LRT <- function(counts, target, varInt, batch=NULL, interact=NULL, re
   
   dds <- nbinomLRT(dds, reduced=reduced)
   results <- list()
-  results[[paste0("drop_", varInt)]]<- results(dds, name=varInt, pAdjustMethod=pAdjustMethod, cooksCutoff=cooksCutoff,
+  results[[paste0("drop_", varInt)]]<- results(dds, pAdjustMethod=pAdjustMethod, cooksCutoff=cooksCutoff,
                                                             independentFiltering=independentFiltering, alpha=alpha)
   
   return(list(dds=dds,results=results,sf=sizeFactors(dds)))
