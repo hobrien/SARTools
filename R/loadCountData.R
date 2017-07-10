@@ -17,7 +17,7 @@ loadCountData <- function(target, rawDir="raw", header=FALSE, skip=0,
   labels <- as.character(target[,1])
   files <- as.character(target[,2])
 
-  rawCounts <- read.table(paste(rawDir,files[1],sep="/"), sep="\t", quote="\"", header=header, skip=skip)
+  rawCounts <- read_tsv(paste(rawDir,files[1],sep="/"), col_names=header, skip=skip)
   rawCounts <- rawCounts[,1:2]
   colnames(rawCounts) <- c("Id", labels[1])
   if (any(duplicated(rawCounts$Id))) stop("Duplicated feature names in ", files[1])
@@ -25,7 +25,7 @@ loadCountData <- function(target, rawDir="raw", header=FALSE, skip=0,
   cat(files[1],": ",length(rawCounts[,labels[1]])," rows and ",sum(rawCounts[,labels[1]]==0)," null count(s)\n",sep="")
 
   for (i in 2:length(files)){
-  	tmp <- read.table(paste(rawDir,files[i],sep="/"), sep="\t", header=header, skip=skip)
+  	tmp <- read_tsv(paste(rawDir,files[i],sep="/"), col_names=header, skip=skip)
     tmp <- tmp[,1:2]
   	colnames(tmp) <- c("Id", labels[i])
   	if (any(duplicated(tmp$Id))) stop("Duplicated feature names in ", files[i])
