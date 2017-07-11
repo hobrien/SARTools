@@ -12,9 +12,17 @@
 
 exploreCounts <- function(object, group, typeTrans="VST", gene.selection="pairwise",
                           col=c("lightblue","orange","MediumVioletRed","SpringGreen")){
+  if (!I("tables" %in% dir())) dir.create("tables", showWarnings=FALSE)
   if (class(object)=="DESeqDataSet"){
-    if (typeTrans == "VST") counts.trans <- assay(varianceStabilizingTransformation(object))
-    else counts.trans <- assay(rlogTransformation(object))
+    if (typeTrans == "VST") {
+      counts.trans <- assay(varianceStabilizingTransformation(object))
+      vst_df <- as.data.frame(counts.trans)
+      vst_df$Id <- row.names(vst_df)
+      vst_df <- select(vst_df, Id, everything())
+      write_tsv(vst_df, "tables/counts_vst.txt")
+    } else {
+      counts.trans <- assay(rlogTransformation(object))
+    }  
     PCAPlot(counts.trans=counts.trans, group=group, col=col)
     clusterPlot(counts.trans=counts.trans, group=group)  
   } else if (class(object)=="DGEList"){

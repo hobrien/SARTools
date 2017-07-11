@@ -32,22 +32,35 @@ PCAPlot <- function(counts.trans, group, n=min(500,nrow(counts.trans)),
   if (outfile) png(filename="figures/PCA.png",width=1800*2,height=1800,res=300)
     par(mfrow=c(1,2))
 	# axes 1 et 2
-  p1 <- ggbiplot::ggbiplot(pca, obs.scale = 1, var.scale = 1, 
-                    groups = factor(group), ellipse = TRUE, 
-                    circle = FALSE, var.axes = FALSE) +
-                    scale_colour_brewer(type = type, palette = palette) +
-                    fte_theme() +
-                    theme(aspect.ratio=1)
-
-	# axes 1 et 3
-  p2 <- ggbiplot::ggbiplot(pca, choices = c(1,3), obs.scale = 1, var.scale = 1, 
-                           groups = factor(group), ellipse = TRUE, 
-                           circle = FALSE, var.axes = FALSE) +
-                           fte_theme() +
-                           scale_colour_brewer(type = type, palette = palette) +
-                           theme(aspect.ratio=1) +
-                           theme(legend.position=c(.9,.9))
-  
+    pca_df <- fortify(pca)
+    pca_df$Sample <- row.names(pca_df)
+    pca_df$group <- group
+    
+    
+    palette <- 6
+    type = "qual"
+    # axes 1 et 2
+    
+    p1 <- ggplot(pca_df, aes(x=PC1, y=PC2, colour=group)) + 
+      geom_point() +
+      stat_ellipse(aes(group = group)) +
+      scale_colour_brewer(type = type, palette = palette) +
+      xlab(sprintf("PC1 (%0.1f%% explained var.)", prp[1])) +
+      ylab(sprintf("PC2 (%0.1f%% explained var.)", prp[2])) +
+      fte_theme() +
+      theme(aspect.ratio=1)
+    
+    # axes 1 et 3
+    p2 <- ggplot(pca_df, aes(x=PC1, y=PC3, colour=group)) + 
+      geom_point() +
+      stat_ellipse(aes(group = group)) +
+      scale_colour_brewer(type = type, palette = palette) +
+      xlab(sprintf("PC1 (%0.1f%% explained var.)", prp[1])) +
+      ylab(sprintf("PC3 (%0.1f%% explained var.)", prp[3])) +
+      fte_theme() +
+      theme(aspect.ratio=1) +
+      theme(legend.position=c(.9,.9))
+    
   grid.arrange(p1, p2, ncol=2)
   if (outfile) dev.off()
 
