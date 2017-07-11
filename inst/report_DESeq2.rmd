@@ -322,9 +322,8 @@ Parameter values used for this analysis are:
 - testMethod: `r testMethod`
 - typeTrans: `r typeTrans`
 - locfunc: `r locfunc`
-- brainBank: `r BrainBank`
 - excludedSamples: `r ifelse(is.null(exclude), "NULL", paste(exclude, collapse=', '))`
-- ExcludedGenes: `r ifelse(is.null(excludedFeaturesFile),"NULL",paste(excludedFeaturesFile,collapse=", "))`
+- ExcludedGenes: `r ifelse(opt$sex_chromosomes, 'Sex chromosomes', '')`
 - # samples: `r ncol(counts)`
 - colors: `r colors`
 
