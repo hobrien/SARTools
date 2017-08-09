@@ -16,7 +16,8 @@
 #' @return A list containing the \code{dds} object (\code{DESeqDataSet} class), the \code{results} objects (\code{DESeqResults} class) and the vector of size factors
 #' @author Hugo Varet
 
-run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL,
+library(sva)
+run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL, num_sva=0,
                        locfunc="median", fitType="parametric", pAdjustMethod="BH",
 		       cooksCutoff=TRUE, independentFiltering=TRUE, alpha=0.05, ...){
   # building dds object
@@ -25,15 +26,35 @@ run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL,
                                                      ifelse(!is.null(interact), paste(c("", interact), collapse = " * "), ""),
                                                      ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
                                 )))
-  cat("Design of the statistical model:\n")
-  cat(paste(as.character(design(dds)),collapse=" "),"\n")					  
   
+  reduced=formula(paste("~ 1",  ifelse(!is.null(interact), paste(c("", interact), collapse = " + "), ""),
+                        ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
+  ))
   # normalization
   dds <- estimateSizeFactors(dds,locfunc=eval(as.name(locfunc)))
   cat("\nNormalization factors:\n")
   print(sizeFactors(dds))
+
   
-  # estimating dispersions
+  # surrogate variable analysis
+  if (num_sva > 0){
+    dat<-counts(dds, normalized=TRUE)
+    idx<-rowMeans(dat) > 1
+    dat<-dat[idx,]
+    svseq<-svaseq(dat, model.matrix(design(dds), colData(dds)), model.matrix(reduced, colData(dds)), n.sv=num_sva)
+    surVar <- as.data.frame(svseq$sv)
+    colData(dds)<-cbind(colData(dds), surVar)
+    design(dds) <- formula(paste("~ ", varInt, 
+                                   ifelse(!is.null(interact), paste(c("", interact), collapse = " * "), ""),
+                                   ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), ""),
+                                   paste(c("", colnames(surVar)), collapse = " + ")
+    ))
+  }  
+
+  cat("Design of the statistical model:\n")
+  cat(paste(as.character(design(dds)),collapse=" "),"\n")					  
+  
+    s# estimating dispersions
   dds <- estimateDispersions(dds, fitType=fitType)
   
   # statistical testing: perform all the comparisons between the levels of varInt
