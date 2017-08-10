@@ -17,16 +17,25 @@
 #' @author Hugo Varet
 
 library(sva)
-run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL, num_sva=0,
+run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL, num_sva=0, kallisto=FALSE,
                        locfunc="median", fitType="parametric", pAdjustMethod="BH",
 		       cooksCutoff=TRUE, independentFiltering=TRUE, alpha=0.05, ...){
   # building dds object
-  dds <- DESeqDataSetFromMatrix(countData=counts, colData=target, 
+  if (kallisto) {
+    dds <- DESeqDataSetFromTximport(counts, target, 
+                                  formula(paste("~", varInt, 
+                                                       ifelse(!is.null(interact), paste(c("", interact), collapse = " * "), ""),
+                                                       ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
+                                  )))
+    dds<-DESeq(dds)
+    
+  } else {
+    dds <- DESeqDataSetFromMatrix(countData=counts, colData=target, 
                                 design=formula(paste("~", varInt, 
                                                      ifelse(!is.null(interact), paste(c("", interact), collapse = " * "), ""),
                                                      ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
                                 )))
-  
+
   reduced=formula(paste("~ 1",  ifelse(!is.null(interact), paste(c("", interact), collapse = " + "), ""),
                         ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
   ))
@@ -59,6 +68,7 @@ run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL, num_sv
   
   # statistical testing: perform all the comparisons between the levels of varInt
   dds <- nbinomWaldTest(dds, ...)
+}
   results <- list()
   for (comp in combn(nlevels(colData(dds)[,varInt]), 2, simplify=FALSE)){
     levelRef <- levels(colData(dds)[,varInt])[comp[1]]

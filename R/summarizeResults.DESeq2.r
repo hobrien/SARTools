@@ -11,7 +11,7 @@
 #' @return A list containing: (i) a list of \code{data.frames} from \code{exportResults.DESeq2()}, (ii) the table summarizing the independent filtering procedure and (iii) a table summarizing the number of differentially expressed features
 #' @author Hugo Varet
 
-summarizeResults.DESeq2 <- function(out.DESeq2, group, independentFiltering=TRUE, cooksCutoff=TRUE,
+summarizeResults.DESeq2 <- function(out.DESeq2, group, independentFiltering=TRUE, cooksCutoff=TRUE, kallisto=FALSE,
                                     alpha=0.05, col=c("lightblue","orange","MediumVioletRed","SpringGreen")){
   # create the figures/tables directory if does not exist
   if (!I("figures" %in% dir())) dir.create("figures", showWarnings=FALSE)
@@ -21,7 +21,7 @@ summarizeResults.DESeq2 <- function(out.DESeq2, group, independentFiltering=TRUE
   results <- out.DESeq2$results
   
   # diagnostic of the size factors
-  diagSizeFactorsPlots(dds=dds)
+ if (! kallisto) diagSizeFactorsPlots(dds=dds)
   
   # boxplots before and after normalisation
   countsBoxplots(dds, group=group, col=col)

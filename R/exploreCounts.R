@@ -18,7 +18,7 @@ exploreCounts <- function(object, group, typeTrans="VST", gene.selection="pairwi
       counts.trans <- assay(varianceStabilizingTransformation(object))
       vst_df <- as.data.frame(counts.trans)
       vst_df$Id <- row.names(vst_df)
-      vst_df <- select(vst_df, Id, everything())
+      vst_df <- dplyr::select(vst_df, Id, everything())
       write_tsv(vst_df, "tables/counts_vst.txt")
     } else {
       counts.trans <- assay(rlogTransformation(object))
