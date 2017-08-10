@@ -16,7 +16,7 @@
 #' @return A list containing the \code{dds} object (\code{DESeqDataSet} class), the \code{results} objects (\code{DESeqResults} class) and the vector of size factors
 #' @author Hugo Varet
 
-library(sva)
+
 run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL, num_sva=0, kallisto=FALSE,
                        locfunc="median", fitType="parametric", pAdjustMethod="BH",
 		       cooksCutoff=TRUE, independentFiltering=TRUE, alpha=0.05, ...){
@@ -47,6 +47,7 @@ run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL, num_sv
   
   # surrogate variable analysis
   if (num_sva > 0){
+    library(sva)
     dat<-counts(dds, normalized=TRUE)
     idx<-rowMeans(dat) > 1
     dat<-dat[idx,]
