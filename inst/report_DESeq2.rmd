@@ -57,6 +57,7 @@ fun_summary=function(x){
   return(round(out,0))
 }
 print(xtable(apply(counts,2,fun_summary),caption="Table 3: Summary of the raw counts.",digits=0), type="html", html.table.attributes = "align='center'")
+if (opt$kallisto) counts=counts$counts
 nbNull <- nrow(counts) - nrow(removeNull(counts)) # needed in one of the next paragraphs
 ```
 
@@ -154,7 +155,9 @@ if (!is.null(batch)){
 Normalization aims at correcting systematic technical biases in the data, in order to make read counts comparable across samples. The normalization proposed by DESeq2 relies on the hypothesis that most features are not differentially expressed. It computes a scaling factor for each sample. Normalized read counts are obtained by dividing raw read counts by the scaling factor associated with the sample they belong to. Scaling factors around 1 mean (almost) no normalization is performed. Scaling factors lower than 1 will produce normalized counts higher than raw ones, and the other way around. Two options are available to compute scaling factors: locfunc="median" (default) or locfunc="shorth". Here, the normalization was performed with locfunc="`r locfunc`".
 
 ```{r , cache=TRUE, echo=FALSE, results="asis"}
+if (! opt$kallisto) {
 print(xtable(t(matrix(out.DESeq2$sf, dimnames=list(target$label,"Size factor"))),caption="Table 5: Normalization factors."), type="html", html.table.attributes = "align='center'")
+}
 ```
 
 The histograms (figure 8) can help to validate the choice of the normalization parameter ("median" or "shorth"). Under the hypothesis that most features are not differentially expressed, each size factor represented by a red line is expected to be close to the mode of the distribution of the counts divided by their geometric means across samples.
