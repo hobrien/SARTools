@@ -18,10 +18,19 @@
 #' @author Hugo Varet
 
 run.DESeq2.LRT <- function(counts, target, varInt, batch=NULL, interact=NULL, reduced=NULL,
-                       locfunc="median", fitType="parametric", pAdjustMethod="BH",
+                       locfunc="median", fitType="parametric", pAdjustMethod="BH", kallisto=TRUE,
 		       cooksCutoff=TRUE, independentFiltering=TRUE, alpha=0.05, ...){
   # building dds object
-  dds <- DESeqDataSetFromMatrix(countData=counts, colData=target, 
+  if (kallisto) {
+    dds <- DESeqDataSetFromTximport(counts, target, 
+                                    formula(paste("~", varInt, 
+                                                  ifelse(!is.null(interact), paste(c("", interact), collapse = " * "), ""),
+                                                  ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
+                                    )))
+    dds<-DESeq(dds)
+    
+  } else {
+    dds <- DESeqDataSetFromMatrix(countData=counts, colData=target, 
                                 design=formula(paste("~", varInt, 
                                                      ifelse(!is.null(interact), paste(c("", interact), collapse = " * "), ""),
                                                      ifelse(!is.null(batch), paste(c("", batch), collapse = " + "), "")
@@ -46,6 +55,7 @@ run.DESeq2.LRT <- function(counts, target, varInt, batch=NULL, interact=NULL, re
   dds <- estimateDispersions(dds, fitType=fitType)
   
   dds <- nbinomLRT(dds, reduced=reduced)
+  }
   results <- list()
   results[[paste0("drop_", varInt)]]<- results(dds, pAdjustMethod=pAdjustMethod, cooksCutoff=cooksCutoff,
                                                             independentFiltering=independentFiltering, alpha=alpha, name=varInt)
