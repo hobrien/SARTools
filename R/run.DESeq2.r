@@ -64,7 +64,7 @@ run.DESeq2 <- function(counts, target, varInt, batch=NULL, interact=NULL, num_sv
   cat("Design of the statistical model:\n")
   cat(paste(as.character(design(dds)),collapse=" "),"\n")					  
   
-    s# estimating dispersions
+    # estimating dispersions
   dds <- estimateDispersions(dds, fitType=fitType)
   
   # statistical testing: perform all the comparisons between the levels of varInt
